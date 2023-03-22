@@ -1,4 +1,4 @@
-import connectDB from "@/config/connectDB";
+import connectDB from "@/configs/server/connectDB";
 import Product from "@/models/Products";
 import nc from "next-connect";
 
@@ -8,9 +8,7 @@ handler.post(async (req, res) => {
   await connectDB();
   const newProduct = await new Product(req.body);
   const product = await newProduct.save();
-  res.send({ message: "Product Created", product });
-  console.log(product);
-  //   res.send({ success: true, message: "seeded successfully" });
+  res.send({ success: true, message: "Product Created", product });
 });
 
 export default handler;

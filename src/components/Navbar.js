@@ -10,8 +10,8 @@ import Cookies from "js-cookie";
 
 const Navbar = ({}) => {
   const { data: session } = useSession(); // tạo biến session bằng data
-  const status = useSelector((state) => state.cartReducer.status);
-  const cart = useSelector((state) => state.cartReducer.cart);
+  const status = useSelector((state) => state.cartSlice.status);
+  const cart = useSelector((state) => state.cartSlice.cart);
   const [toggleUser, setToggleUser] = useState(false);
 
   const user = session?.user;

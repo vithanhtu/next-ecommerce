@@ -4,17 +4,18 @@ import Image from "next/image";
 import Link from "next/link";
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { API_URL } from "../../configs/client/local";
 import {
   addToCart,
   itemsCart,
   removeItemCart,
   statusCart,
   productStock,
-} from "../redux/reducers/cartReducer";
+} from "../../store/slices/cartSlice";
 
 const Cart = ({ products }) => {
   const dispatch = useDispatch();
-  const carts = useSelector((state) => state.cartReducer.cart);
+  const carts = useSelector((state) => state.cartSlice.cart);
 
   const handleStock = async (id, qtyStock) => {
     try {
@@ -170,12 +171,12 @@ const Cart = ({ products }) => {
                       Shipping and taxes calculated at checkout.
                     </p>
                     <div className="mt-6">
-                      <a
-                        href="#"
+                      <Link
+                        href="/checkout"
                         className="flex items-center justify-center rounded-md border border-transparent bg-indigo-600 px-6 py-3 text-base font-medium text-white shadow-sm hover:bg-indigo-700"
                       >
                         Checkout
-                      </a>
+                      </Link>
                     </div>
                     <div className="mt-6 flex justify-center text-center text-sm text-gray-500">
                       <p>
@@ -208,7 +209,7 @@ const Cart = ({ products }) => {
 export default Cart;
 
 export const getStaticProps = async () => {
-  const { data } = await axios.get("http://localhost:3000/api/products");
+  const { data } = await axios.get(`${API_URL}/api/products`);
   console.log(data);
   return {
     props: { products: data },

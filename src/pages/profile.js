@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { getSession, useSession, signOut } from "next-auth/react";
 import Cookies from "js-cookie";
 

@@ -1,15 +1,9 @@
 import Head from "next/head";
-
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import Home_Banner from "../components/Home_Banner";
 import Home_Trending from "../components/Home_Trending";
 import Products from "../components/Products";
-import img1 from "../../public/images/category-1.jpg.webp";
-import img2 from "../../public/images/category-2.jpg.webp";
-import img3 from "../../public/images/category-3.jpg.webp";
-import img4 from "../../public/images/category-4.jpg.webp";
-import img5 from "../../public/images/category-5.jpg.webp";
-import discountImg from "../../public/images/xdiscount.jpg.pagespeed.ic._v9FuG3AaK.webp";
+import { imgSlider } from "../utils/slider_image";
 
 import { AiFillCar } from "react-icons/ai";
 import { FaMoneyBillAlt } from "react-icons/fa";
@@ -18,7 +12,8 @@ import { BsHeadset } from "react-icons/bs";
 import Image from "next/image";
 import axios from "axios";
 import { useDispatch } from "react-redux";
-import { setProducts } from "../redux/reducers/productsReducer";
+import { setProducts } from "../store/slices/productSlice";
+import { API_URL } from "../configs/client/local";
 
 export default function Home({ products }) {
   const dispatch = useDispatch();
@@ -41,7 +36,11 @@ export default function Home({ products }) {
       <div className="catogeries mt-5">
         <div className="grid h-full gap-4 lg:grid-cols-2 mb-auto grid-cols-1 w-full mx-auto mt- catogeries-item">
           <div className="relative">
-            <Image alt="" src={img1} className="object-cover h-full"></Image>
+            <Image
+              alt=""
+              src={imgSlider.prodImg1}
+              className="object-cover h-full"
+            ></Image>
             <div className="catogeries-text w-full md:w-2/4 absolute lg:top-1/3 top-6 leading-4 lg:left-ml15 left-4">
               <h1 className="font-text text-4xl lg:text-5xl">
                 Women’s fashion
@@ -65,7 +64,7 @@ export default function Home({ products }) {
               <div className="relative w-full">
                 <Image
                   alt=""
-                  src={img2}
+                  src={imgSlider.prodImg2}
                   className="w-full object-cover h-full"
                 ></Image>
                 <div className="catogeries-text w-2/4 absolute top-12 left-14">
@@ -83,7 +82,7 @@ export default function Home({ products }) {
               <div className="relative w-full">
                 <Image
                   alt=""
-                  src={img3}
+                  src={imgSlider.prodImg3}
                   className="w-full object-cover h-full"
                 ></Image>
                 <div className="catogeries-text w-2/4 absolute top-12 left-14">
@@ -101,7 +100,7 @@ export default function Home({ products }) {
               <div className="relative w-full">
                 <Image
                   alt=""
-                  src={img4}
+                  src={imgSlider.prodImg4}
                   className="w-full object-cover h-full"
                 ></Image>
                 <div className="catogeries-text w-2/4 absolute top-12 left-14">
@@ -119,7 +118,7 @@ export default function Home({ products }) {
               <div className="relative w-full">
                 <Image
                   alt=""
-                  src={img5}
+                  src={imgSlider.prodImg5}
                   className="w-full object-cover h-full"
                 ></Image>
                 <div className="catogeries-text w-2/4 absolute top-12 left-14">
@@ -144,7 +143,7 @@ export default function Home({ products }) {
 
       <div className="banner-discount grid grid-cols-1 lg:grid-cols-2 lg:max-w-7xl max-w-2xl mx-auto h-auto">
         <div className="banner-discount-imgae h-auto">
-          <Image alt="" className="w-full" src={discountImg}></Image>
+          <Image alt="" className="w-full" src={imgSlider.discountImg}></Image>
         </div>
         <div className="banner-discount-content items-center flex justify-center">
           <div className="mt-24 lg:mt-14">
@@ -201,7 +200,7 @@ export default function Home({ products }) {
 }
 
 export async function getStaticProps() {
-  const { data } = await axios.get("http://localhost:3000/api/products");
+  const { data } = await axios.get(`${API_URL}/api/products`);
 
   return {
     props: { products: data },

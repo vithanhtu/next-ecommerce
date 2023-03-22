@@ -6,14 +6,17 @@ import {
   statusProducts,
   filterNewProducts,
   filterCategories,
-} from "../redux/reducers/productsReducer";
-import { addToCart } from "../redux/reducers/cartReducer";
+} from "../store/slices/productSlice";
+import { addToCart, productStock } from "../store/slices/cartSlice";
 import Link from "next/link";
 import Image from "next/image";
+import Cookies from "js-cookie";
+import { useRouter } from "next/router";
 
 const Products = ({ dataProducts }) => {
   const dispatch = useDispatch();
-  const newProducts = useSelector((state) => state.productsReducer.newProducts);
+  const router = useRouter();
+  const newProducts = useSelector((state) => state.productSlice.newProducts);
   const allCategories = [
     "All",
     ...new Set(dataProducts.map((item) => item.category)),
@@ -21,6 +24,30 @@ const Products = ({ dataProducts }) => {
 
   const handleCategories = (cate) => {
     dispatch(filterCategories(cate));
+  };
+
+  const handleStock = async (id, qtyStock) => {
+    try {
+      const product = dataProducts.find((item) => item._id === id);
+      console.log(product);
+      if (product.countInStock <= qtyStock) {
+        window.alert("The number of products in stock has exceeded!");
+        dispatch(productStock({ id, qtyStock: product.countInStock }));
+        return;
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const handleAddToCart = (item) => {
+    const accessToken = Cookies.get("accessToken");
+    if (!accessToken) {
+      window.alert("You need to Signin to continue!");
+      router.push("/login");
+      return;
+    }
+    dispatch(addToCart(item));
   };
 
   useEffect(() => {
@@ -80,7 +107,10 @@ const Products = ({ dataProducts }) => {
                       $ {product.price}
                     </p>
                     <button
-                      onClick={() => dispatch(addToCart(product._id))}
+                      onClick={() =>
+                        handleAddToCart(product) &&
+                        handleStock(product._id, product.qty)
+                      }
                       className="px-2 py-1 transition ease-in duration-200 rounded-full hover:bg-gray-800 hover:text-white border-2 border-gray-900 focus:outline-none"
                     >
                       Add To Cart

@@ -6,7 +6,7 @@ import axios from "axios";
 const index = () => {
   const {
     register,
-    formState: { errors },
+    // formState: { errors },
     handleSubmit,
   } = useForm();
 
@@ -20,7 +20,7 @@ const index = () => {
       img: imageBase64,
     });
 
-    console.log(product);
+    // console.log(product);
   };
 
   return (

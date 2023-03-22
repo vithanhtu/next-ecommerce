@@ -5,11 +5,12 @@ import { useState } from "react";
 import { useEffect } from "react";
 import { useRef } from "react";
 import { useDispatch } from "react-redux";
-import { addToCart } from "../../redux/reducers/cartReducer";
+import { addToCart } from "../../store/slices/cartSlice";
 import Image from "next/image";
 import axios from "axios";
 import data from "@/utils/data";
 import Cookies from "js-cookie";
+import { API_URL } from "../../configs/client/local";
 import { useRouter } from "next/router";
 
 function Details({ productData, listProduct }) {
@@ -262,7 +263,7 @@ function Details({ productData, listProduct }) {
 export default Details;
 
 export async function getStaticPaths() {
-  const { data } = await axios.get("http://localhost:3000/api/products");
+  const { data } = await axios.get(`${API_URL}/api/products`);
   const paths = data.map((item) => {
     return {
       params: { slug: item.slug },

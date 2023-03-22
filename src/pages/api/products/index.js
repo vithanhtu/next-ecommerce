@@ -1,6 +1,6 @@
 import Product from "@/models/Products";
 import nc from "next-connect";
-import connectDB from "@/config/connectDB";
+import connectDB from "@/configs/server/connectDB";
 
 const hander = nc();
 

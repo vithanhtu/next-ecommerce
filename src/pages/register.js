@@ -3,6 +3,7 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import React from "react";
 import { useForm } from "react-hook-form";
+import { API_URL } from "../configs/client/local";
 
 const Register = () => {
   const {
@@ -17,10 +18,7 @@ const Register = () => {
     if (payload.password !== payload.cpassword) {
       alert("Confirm password does not match!");
     }
-    const { data } = await axios.post(
-      "http://localhost:3000/api/auth/signup",
-      payload
-    );
+    const { data } = await axios.post(`${API_URL}/api/auth/signup`, payload);
 
     if (data) {
       router.push("/login");

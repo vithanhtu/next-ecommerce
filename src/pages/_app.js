@@ -1,6 +1,6 @@
 import { SessionProvider } from "next-auth/react";
 import { Provider } from "react-redux";
-import { wrapper } from "../redux/store";
+import { wrapper } from "../store/index";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import "@/styles/globals.css";

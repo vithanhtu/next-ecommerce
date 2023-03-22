@@ -2,15 +2,18 @@ import React from "react";
 import { useState } from "react";
 import { BiChevronDown } from "react-icons/bi";
 import { useDispatch } from "react-redux";
-import { addToCart } from "../../redux/reducers/cartReducer";
+import { API_URL } from "../../configs/client/local";
+import { addToCart } from "../../store/slices/cartSlice";
 import {
   filterProducts,
   searchProducts,
   setProducts,
-} from "../../redux/reducers/productsReducer";
+} from "../../store/slices/productSlice";
 import Link from "next/link";
 import Image from "next/image";
 import axios from "axios";
+import Cookies from "js-cookie";
+import { useRouter } from "next/router";
 
 const Shop = ({ products }) => {
   const dispatch = useDispatch();
@@ -20,9 +23,20 @@ const Shop = ({ products }) => {
   const [moreElement, setMoreElement] = useState(6);
   const sliceData = products.slice(0, moreElement);
   const allCategories = [...new Set(products.map((item) => item.info))];
+  const router = useRouter();
 
   const loadMore = () => {
     setMoreElement(moreElement + moreElement);
+  };
+
+  const handleAddToCart = (item) => {
+    const accessToken = Cookies.get("accessToken");
+    if (!accessToken) {
+      window.alert("You need to Signin to continue!");
+      router.push("/login");
+      return;
+    }
+    dispatch(addToCart(item));
   };
 
   return (
@@ -165,7 +179,7 @@ const Shop = ({ products }) => {
                         $ {product.price}
                       </p>
                       <button
-                        onClick={() => dispatch(addToCart(product._id))}
+                        onClick={() => handleAddToCart(product)}
                         className="px-2 py-1 transition ease-in duration-200 rounded-full hover:bg-gray-800 hover:text-white border-2 border-gray-900 focus:outline-none"
                       >
                         Add To Cart
@@ -193,7 +207,7 @@ const Shop = ({ products }) => {
 export default Shop;
 
 export const getStaticProps = async () => {
-  const { data } = await axios.get("http://localhost:3000/api/products");
+  const { data } = await axios.get(`${API_URL}/api/products`);
   return {
     props: { products: data },
   };

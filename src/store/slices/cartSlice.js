@@ -1,7 +1,4 @@
-import data from "@/utils/data";
 import { createSlice } from "@reduxjs/toolkit";
-
-const { products } = data;
 
 const cartSlice = createSlice({
   name: "cart",

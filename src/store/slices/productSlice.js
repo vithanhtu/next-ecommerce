@@ -31,11 +31,11 @@ const productsSlice = createSlice({
 
     filterProducts: (state, action) => {
       if (action.payload == "Accessories" || "Cosmetic") {
-        state.products = dataProducts.products.filter(
+        state.products = state.dataProducts.filter(
           (prod) => prod.category === action.payload
         );
       }
-      const categoriesProducts = dataProducts.products.filter(
+      const categoriesProducts = state.dataProducts.filter(
         (prod) =>
           prod.category === action.payload.cate &&
           prod.info === action.payload.item
@@ -47,18 +47,18 @@ const productsSlice = createSlice({
 
     searchProducts: (state, action) => {
       if (action.payload) {
-        state.products = dataProducts.products.filter((item) => {
+        state.products = state.dataProducts.filter((item) => {
           return item.title
             .toLowerCase()
             .includes(action.payload.toLowerCase());
         });
       } else {
-        state.products = [...dataProducts.products];
+        state.products = [...state.dataProducts];
       }
     },
 
     statusProducts: (state) => {
-      state.newProducts = [...dataProducts.products];
+      state.newProducts = [...state.dataProducts];
     },
   },
 });

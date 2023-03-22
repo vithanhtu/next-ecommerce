@@ -1,7 +1,7 @@
 import NextAuth from "next-auth";
 import bcrypt from "bcryptjs";
 import User from "@/models/User";
-import connectDB from "@/config/connectDB";
+import connectDB from "@/configs/server/connectDB";
 import CredentialsProvider from "next-auth/providers/credentials";
 import Cookies from "js-cookie";
 import { signToken } from "@/utils/auth";
@@ -17,8 +17,6 @@ export const authOptions = {
         connectDB();
         const { email, password } = credentials;
         const user = await User.findOne({ email });
-        // const access_token = localStorage.getItem("accessToken");
-        // console.log(access_token);
 
         if (!user) {
           throw new Error("No user Found with Email Please Sign Up...!");

@@ -1,4 +1,4 @@
-import connectDB from "@/config/connectDB";
+import connectDB from "@/configs/server/connectDB";
 import Product from "@/models/Products";
 import data from "@/utils/data";
 import nc from "next-connect";

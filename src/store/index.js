@@ -1,13 +1,13 @@
-import productsReducer from "./reducers/productsReducer";
-import cartReducer from "./reducers/cartReducer";
-import authReducer from "./reducers/authReducer";
+import productSlice from "./slices/productSlice";
+import cartSlice from "./slices/cartSlice";
+import authSlice from "./slices/authSlice";
 
 import { configureStore } from "@reduxjs/toolkit";
 import { createWrapper } from "next-redux-wrapper";
 
 const makeStore = () =>
   configureStore({
-    reducer: { productsReducer, cartReducer, authReducer },
+    reducer: { productSlice, cartSlice, authSlice },
     devTools: true,
   });
 
