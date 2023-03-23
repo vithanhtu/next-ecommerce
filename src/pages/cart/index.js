@@ -13,9 +13,11 @@ import {
   productStock,
 } from "../../store/slices/cartSlice";
 
-const Cart = ({ products }) => {
+const Cart = ({ products, carts }) => {
   const dispatch = useDispatch();
-  const carts = useSelector((state) => state.cartSlice.cart);
+  const demo = useSelector((state) => state.cartSlice.cart);
+  // console.log(carts.cartItems);
+  const cartItems = carts.cartItems[0].orderItems;
 
   const handleStock = async (id, qtyStock) => {
     try {
@@ -30,7 +32,7 @@ const Cart = ({ products }) => {
     }
   };
 
-  const itemPrice = carts.reduce(
+  const itemPrice = cartItems.reduce(
     (init, current) => init + current.qty * current.price,
     0
   );
@@ -91,7 +93,7 @@ const Cart = ({ products }) => {
                           role="list"
                           className="-my-6 divide-y divide-gray-200"
                         >
-                          {carts.map((product, index) => {
+                          {cartItems.map((product, index) => {
                             return (
                               <li key={index} className="flex py-6">
                                 <div className="h-24 w-24 flex-shrink-0 overflow-hidden rounded-md border border-gray-200">
@@ -100,7 +102,7 @@ const Cart = ({ products }) => {
                                     height={0}
                                     src={product.img}
                                     alt=""
-                                    className="h-full w-full object-cover object-center"
+                                    className="h-full w-full object-center"
                                   />
                                 </div>
                                 <div className="ml-4 flex flex-1 flex-col">
@@ -210,8 +212,9 @@ export default Cart;
 
 export const getStaticProps = async () => {
   const { data } = await axios.get(`${API_URL}/api/products`);
-  console.log(data);
+  const carts = await axios.get(`${API_URL}/api/order`);
+
   return {
-    props: { products: data },
+    props: { products: data, carts: carts.data },
   };
 };

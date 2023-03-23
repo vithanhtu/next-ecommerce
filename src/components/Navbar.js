@@ -1,23 +1,29 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { BsFillCartPlusFill } from "react-icons/bs";
 import logo from "../../public/images/logo_ft.jpg";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import Cart from "../pages/cart";
 import Link from "next/link";
 import Image from "next/image";
 import { getSession, useSession, signOut } from "next-auth/react";
 import Cookies from "js-cookie";
+import { getUser } from "../store/slices/authSlice";
 
 const Navbar = ({}) => {
   const { data: session } = useSession(); // tạo biến session bằng data
   const status = useSelector((state) => state.cartSlice.status);
   const cart = useSelector((state) => state.cartSlice.cart);
   const [toggleUser, setToggleUser] = useState(false);
+  const dispatch = useDispatch();
 
   const user = session?.user;
   if (user?.accessToken) {
     Cookies.set("accessToken", user?.accessToken);
   }
+
+  useEffect(() => {
+    dispatch(getUser(user));
+  }, [user]);
 
   const handleSignOut = () => {
     Cookies.remove("accessToken");

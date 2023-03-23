@@ -4,7 +4,7 @@ import Products from "../../components/Products";
 import { useState } from "react";
 import { useEffect } from "react";
 import { useRef } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { addToCart } from "../../store/slices/cartSlice";
 import Image from "next/image";
 import axios from "axios";
@@ -30,14 +30,28 @@ function Details({ productData, listProduct }) {
 
   const dispatch = useDispatch();
   const router = useRouter();
+  const user = useSelector((state) => state.authSlice.user);
+  const carts = useSelector((state) => state.cartSlice.cart);
 
-  const handleAddToCart = (item) => {
+  const handleAddToCart = async (item) => {
     const accessToken = Cookies.get("accessToken");
     if (!accessToken) {
       window.alert("You need to Signin to continue!");
       router.push("/login");
       return;
     }
+
+    const cartItems = {
+      title: item.title,
+      price: item.price,
+      img: item.img,
+      qty: item.qty ? item.qty : 1,
+    };
+    const { data } = await axios.patch(`${API_URL}/api/order/newOrder`, {
+      userId: user?._id,
+      cartItems,
+    });
+    // console.log(data);
     dispatch(addToCart(item));
   };
 

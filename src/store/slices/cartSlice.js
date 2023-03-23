@@ -1,6 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit";
+import Cookies from "js-cookie";
 
-const cartSlice = createSlice({
+const cartlice = createSlice({
   name: "cart",
   initialState: {
     cart: [],
@@ -63,6 +64,6 @@ export const {
   itemsCart,
   removeItemCart,
   productStock,
-} = cartSlice.actions;
+} = cartlice.actions;
 
-export default cartSlice.reducer;
+export default cartlice.reducer;

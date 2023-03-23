@@ -29,7 +29,7 @@ const Shop = ({ products }) => {
     setMoreElement(moreElement + moreElement);
   };
 
-  const handleAddToCart = (item) => {
+  const handleAddToCart = async (item) => {
     const accessToken = Cookies.get("accessToken");
     if (!accessToken) {
       window.alert("You need to Signin to continue!");

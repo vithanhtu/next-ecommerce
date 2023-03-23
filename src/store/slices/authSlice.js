@@ -1,3 +1,5 @@
+import Cookies from "js-cookie";
+
 const { createSlice } = require("@reduxjs/toolkit");
 
 const authSlice = createSlice({
@@ -8,7 +10,6 @@ const authSlice = createSlice({
   reducers: {
     getUser: (state, action) => {
       state.user = { ...action.payload };
-      // console.log(state.user);
     },
   },
 });
