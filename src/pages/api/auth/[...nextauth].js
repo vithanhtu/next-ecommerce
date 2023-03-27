@@ -3,7 +3,6 @@ import bcrypt from "bcryptjs";
 import User from "@/models/User";
 import connectDB from "@/configs/server/connectDB";
 import CredentialsProvider from "next-auth/providers/credentials";
-import Cookies from "js-cookie";
 import { signToken } from "@/utils/auth";
 
 export const authOptions = {

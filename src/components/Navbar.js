@@ -5,14 +5,16 @@ import { useDispatch, useSelector } from "react-redux";
 import Cart from "../pages/cart";
 import Link from "next/link";
 import Image from "next/image";
-import { getSession, useSession, signOut } from "next-auth/react";
+import { getSession, useSession, signOut, getCsrfToken } from "next-auth/react";
 import Cookies from "js-cookie";
 import { getUser } from "../store/slices/authSlice";
+import axios from "axios";
+import { API_URL } from "@/configs/client/local";
 
-const Navbar = ({}) => {
+const Navbar = ({ carts }) => {
   const { data: session } = useSession(); // tạo biến session bằng data
   const status = useSelector((state) => state.cartSlice.status);
-  const cart = useSelector((state) => state.cartSlice.cart);
+  const cart = useSelector((state) => state.cartSlice.cart.cartItems);
   const [toggleUser, setToggleUser] = useState(false);
   const dispatch = useDispatch();
 
@@ -24,6 +26,12 @@ const Navbar = ({}) => {
   useEffect(() => {
     dispatch(getUser(user));
   }, [user]);
+
+  // useEffect(() => {
+  //   getCsrfToken()
+  //     .catch((e) => console.log(e))
+  //     .then((t) => console.log(t));
+  // }, []);
 
   const handleSignOut = () => {
     Cookies.remove("accessToken");
@@ -138,6 +146,9 @@ export default Navbar;
 
 export async function getServerSideProps({ req }) {
   const session = await getSession({ req });
+  const { data } = await axios.get(`${API_URL}/api/order`);
+  const csrfToken = await getCsrfToken({ req });
+
   // if (!session) {
   //   return {
   //     redirect: {
@@ -148,6 +159,6 @@ export async function getServerSideProps({ req }) {
   // }
 
   return {
-    props: { session },
+    props: { session, carts: data, csrfToken },
   };
 }

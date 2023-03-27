@@ -10,12 +10,9 @@ import {
 import { addToCart, productStock } from "../store/slices/cartSlice";
 import Link from "next/link";
 import Image from "next/image";
-import Cookies from "js-cookie";
-import { useRouter } from "next/router";
 
 const Products = ({ dataProducts }) => {
   const dispatch = useDispatch();
-  const router = useRouter();
   const newProducts = useSelector((state) => state.productSlice.newProducts);
   const allCategories = [
     "All",
@@ -41,12 +38,12 @@ const Products = ({ dataProducts }) => {
   };
 
   const handleAddToCart = (item) => {
-    const accessToken = Cookies.get("accessToken");
-    if (!accessToken) {
-      window.alert("You need to Signin to continue!");
-      router.push("/login");
-      return;
-    }
+    // const accessToken = Cookies.get("accessToken");
+    // if (!accessToken) {
+    //   window.alert("You need to Signin to continue!");
+    //   router.push("/login");
+    //   return;
+    // }
     dispatch(addToCart(item));
   };
 

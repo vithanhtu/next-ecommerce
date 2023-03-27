@@ -2,6 +2,7 @@ import Products from "@/components/Products";
 import axios from "axios";
 import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/router";
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { API_URL } from "../../configs/client/local";
@@ -13,11 +14,10 @@ import {
   productStock,
 } from "../../store/slices/cartSlice";
 
-const Cart = ({ products, carts }) => {
+const Cart = ({ products }) => {
   const dispatch = useDispatch();
-  const demo = useSelector((state) => state.cartSlice.cart);
-  // console.log(carts.cartItems);
-  const cartItems = carts.cartItems[0].orderItems;
+  const carts = useSelector((state) => state.cartSlice.cart.cartItems);
+  const router = useRouter();
 
   const handleStock = async (id, qtyStock) => {
     try {
@@ -32,10 +32,14 @@ const Cart = ({ products, carts }) => {
     }
   };
 
-  const itemPrice = cartItems.reduce(
+  const itemPrice = carts.reduce(
     (init, current) => init + current.qty * current.price,
     0
   );
+
+  const prevPage = () => {
+    router.back();
+  };
 
   return (
     <div>
@@ -61,7 +65,7 @@ const Cart = ({ products, carts }) => {
                         Shopping cart
                       </h2>
                       <div className="ml-3 flex h-7 items-center">
-                        <Link href={"/products"}>
+                        <div onClick={prevPage}>
                           <button
                             type="button"
                             className="-m-2 p-2 text-gray-400 hover:text-gray-500"
@@ -84,7 +88,7 @@ const Cart = ({ products, carts }) => {
                               />
                             </svg>
                           </button>
-                        </Link>
+                        </div>
                       </div>
                     </div>
                     <div className="mt-8">
@@ -93,7 +97,7 @@ const Cart = ({ products, carts }) => {
                           role="list"
                           className="-my-6 divide-y divide-gray-200"
                         >
-                          {cartItems.map((product, index) => {
+                          {carts.map((product, index) => {
                             return (
                               <li key={index} className="flex py-6">
                                 <div className="h-24 w-24 flex-shrink-0 overflow-hidden rounded-md border border-gray-200">
@@ -174,7 +178,7 @@ const Cart = ({ products, carts }) => {
                     </p>
                     <div className="mt-6">
                       <Link
-                        href="/checkout"
+                        href="/shipping"
                         className="flex items-center justify-center rounded-md border border-transparent bg-indigo-600 px-6 py-3 text-base font-medium text-white shadow-sm hover:bg-indigo-700"
                       >
                         Checkout
@@ -212,9 +216,8 @@ export default Cart;
 
 export const getStaticProps = async () => {
   const { data } = await axios.get(`${API_URL}/api/products`);
-  const carts = await axios.get(`${API_URL}/api/order`);
 
   return {
-    props: { products: data, carts: carts.data },
+    props: { products: data },
   };
 };

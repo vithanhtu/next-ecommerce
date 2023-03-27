@@ -9,10 +9,11 @@ const productSchema = new mongoose.Schema(
     img: { type: String, required: true },
     price: { type: Number, required: true },
     rating: { type: Number, required: true, default: 0 },
-    countInStock: { type: Number, required: true, default: 0 },
+    countInStock: { type: Number, default: 0 },
     newProduct: { type: Boolean, required: true },
     desc: { type: String, require: true },
     sale: { type: Boolean, required: true },
+    qty: { type: Number, default: 0 },
   },
   {
     timestamps: true,

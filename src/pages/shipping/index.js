@@ -1,5 +1,8 @@
+import { useRouter } from "next/router";
 import React from "react";
 import { useForm } from "react-hook-form";
+import { useDispatch } from "react-redux";
+import { setShipping } from "../../store/slices/cartSlice";
 
 const checkout = () => {
   const {
@@ -8,8 +11,12 @@ const checkout = () => {
     handleSubmit,
   } = useForm();
 
+  const dispatch = useDispatch();
+  const router = useRouter();
+
   const handleCheckout = (payload) => {
-    console.log(payload);
+    dispatch(setShipping(payload));
+    router.push("/payment");
   };
 
   return (
@@ -43,7 +50,7 @@ const checkout = () => {
               Email
             </label>
             <input
-              className="w-full px-5  py-4 text-gray-700 bg-gray-200 rounded"
+              className="w-full px-5  py-2 text-gray-700 bg-gray-200 rounded"
               id="cus_email"
               type="email"
               {...register("email", {
@@ -85,7 +92,7 @@ const checkout = () => {
               required
               placeholder="City"
               aria-label="Email"
-              {...register("address", {
+              {...register("city", {
                 required: true,
               })}
             />
@@ -93,18 +100,6 @@ const checkout = () => {
           {errors.city?.type === "required" && (
             <p className="text-red-600 text-xs italic">City is required</p>
           )}
-          <div className="inline-block mt-2 w-1/2 pr-1">
-            <label className=" block text-sm text-gray-600" htmlFor="cus_email">
-              Country
-            </label>
-            <input
-              className="w-full px-2 py-2 text-gray-700 bg-gray-200 rounded"
-              id="cus_email"
-              type="text"
-              placeholder="Country"
-              aria-label="Email"
-            />
-          </div>
           <div className="mt-4">
             <button
               className="px-4 py-1 text-white font-light tracking-wider bg-gray-900 rounded"

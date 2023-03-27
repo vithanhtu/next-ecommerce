@@ -1,11 +1,52 @@
-import React from "react";
+import { API_URL } from "@/configs/client/local";
+import axios from "axios";
+import Image from "next/image";
+import { useRouter } from "next/router";
+import React, { useEffect, useState } from "react";
+import { useDispatch } from "react-redux";
+import sessionstorage from "sessionstorage";
+import { removeCart } from "../../store/slices/cartSlice";
 
-const index = () => {
+const index = ({ data }) => {
+  const [order, setOrder] = useState(null);
+  const { orders } = data;
+  const router = useRouter();
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    if (orders[0]?.status !== 1) setOrder(orders[0]);
+    return;
+  }, [data]);
+
+  // console.log(order);
+
+  const itemPrice = order?.orderItems.reduce(
+    (init, current) => init + current.qty * current.price,
+    0
+  );
+
+  const handleCheckout = async () => {
+    if (order) {
+      const { data } = await axios.put(`${API_URL}/api/order/updateStatus`, {
+        orderId: order?._id,
+        statusOrder: 1,
+      });
+
+      if (data) {
+        sessionstorage.clear();
+        dispatch(removeCart());
+        setOrder(null);
+
+        router.push("/order/sucess");
+      }
+    }
+  };
+
   return (
     <div className="py-14 px-4 md:px-6 2xl:px-20 2xl:container 2xl:mx-auto">
       <div className="flex justify-start item-start space-y-2 flex-col">
         <h1 className="text-3xl dark:text-white lg:text-4xl font-semibold leading-7 lg:leading-9 text-gray-800">
-          Order #13432
+          Order
         </h1>
         <p className="text-base dark:text-gray-300 font-medium leading-6 text-gray-600">
           21st Mart 2021 at 10:34 PM
@@ -17,114 +58,46 @@ const index = () => {
             <p className="text-lg md:text-xl dark:text-white font-semibold leading-6 xl:leading-5 text-gray-800">
               Customer’s Cart
             </p>
-            <div className="mt-4 md:mt-6 flex flex-col md:flex-row justify-start items-start md:items-center md:space-x-6 xl:space-x-8 w-full">
-              <div className="pb-4 md:pb-8 w-full md:w-40">
-                <img
-                  className="w-full hidden md:block"
-                  src="https://i.ibb.co/84qQR4p/Rectangle-10.png"
-                  alt="dress"
-                />
-                <img
-                  className="w-full md:hidden"
-                  src="https://i.ibb.co/L039qbN/Rectangle-10.png"
-                  alt="dress"
-                />
-              </div>
-              <div className="border-b border-gray-200 md:flex-row flex-col flex justify-between items-start w-full pb-8 space-y-4 md:space-y-0">
-                <div className="w-full flex flex-col justify-start items-start space-y-8">
-                  <h3 className="text-xl dark:text-white xl:text-2xl font-semibold leading-6 text-gray-800">
-                    Premium Quaility Dress
-                  </h3>
-                  <div className="flex justify-start items-start flex-col space-y-2">
-                    <p className="text-sm dark:text-white leading-none text-gray-800">
-                      <span className="dark:text-gray-400 text-gray-300">
-                        Style:{" "}
-                      </span>{" "}
-                      Italic Minimal Design
-                    </p>
-                    <p className="text-sm dark:text-white leading-none text-gray-800">
-                      <span className="dark:text-gray-400 text-gray-300">
-                        Size:{" "}
-                      </span>{" "}
-                      Small
-                    </p>
-                    <p className="text-sm dark:text-white leading-none text-gray-800">
-                      <span className="dark:text-gray-400 text-gray-300">
-                        Color:{" "}
-                      </span>{" "}
-                      Light Blue
-                    </p>
+            {order?.orderItems.map((item, index) => {
+              return (
+                <div
+                  key={index}
+                  className="mt-4 md:mt-6 flex flex-col md:flex-row justify-start items-start  md:space-x-6 xl:space-x-8 w-full"
+                >
+                  <div className="pb-4 md:pb-8 w-full md:w-40">
+                    <Image
+                      alt="img product"
+                      src={item.img}
+                      width={0}
+                      height={200}
+                      className="w-full hidden h-32 object-cover md:block"
+                    ></Image>
+                  </div>
+                  <div className="border-b mt-6 border-gray-200 md:flex-row flex-col flex justify-between items-start w-full pb-8 space-y-4 md:space-y-0">
+                    <div className="w-full flex flex-col justify-start items-start space-y-8">
+                      <h3 className="text-xl dark:text-white xl:text-xl font-semibold leading-6 text-gray-800">
+                        {item.title}
+                      </h3>
+                    </div>
+                    <div className="flex justify-between space-x-8 items-start w-full">
+                      <p className="text-base dark:text-white xl:text-lg leading-6">
+                        {"$"}
+                        {item.price}
+                      </p>
+                      <p className="text-base dark:text-white xl:text-lg leading-6 text-gray-800">
+                        {item.qty}
+                      </p>
+                      <p className="text-base dark:text-white xl:text-lg font-semibold leading-6 text-gray-800">
+                        {"$"}
+                        {item.qty * item.price}
+                      </p>
+                    </div>
                   </div>
                 </div>
-                <div className="flex justify-between space-x-8 items-start w-full">
-                  <p className="text-base dark:text-white xl:text-lg leading-6">
-                    $36.00{" "}
-                    <span className="text-red-300 line-through"> $45.00</span>
-                  </p>
-                  <p className="text-base dark:text-white xl:text-lg leading-6 text-gray-800">
-                    01
-                  </p>
-                  <p className="text-base dark:text-white xl:text-lg font-semibold leading-6 text-gray-800">
-                    $36.00
-                  </p>
-                </div>
-              </div>
-            </div>
-            <div className="mt-6 md:mt-0 flex justify-start flex-col md:flex-row items-start md:items-center space-y-4 md:space-x-6 xl:space-x-8 w-full">
-              <div className="w-full md:w-40">
-                <img
-                  className="w-full hidden md:block"
-                  src="https://i.ibb.co/s6snNx0/Rectangle-17.png"
-                  alt="dress"
-                />
-                <img
-                  className="w-full md:hidden"
-                  src="https://i.ibb.co/BwYWJbJ/Rectangle-10.png"
-                  alt="dress"
-                />
-              </div>
-              <div className="flex justify-between items-start w-full flex-col md:flex-row space-y-4 md:space-y-0">
-                <div className="w-full flex flex-col justify-start items-start space-y-8">
-                  <h3 className="text-xl dark:text-white xl:text-2xl font-semibold leading-6 text-gray-800">
-                    High Quaility Italic Dress
-                  </h3>
-                  <div className="flex justify-start items-start flex-col space-y-2">
-                    <p className="text-sm dark:text-white leading-none text-gray-800">
-                      <span className="dark:text-gray-400 text-gray-300">
-                        Style:{" "}
-                      </span>{" "}
-                      Italic Minimal Design
-                    </p>
-                    <p className="text-sm dark:text-white leading-none text-gray-800">
-                      <span className="dark:text-gray-400 text-gray-300">
-                        Size:{" "}
-                      </span>{" "}
-                      Small
-                    </p>
-                    <p className="text-sm dark:text-white leading-none text-gray-800">
-                      <span className="dark:text-gray-400 text-gray-300">
-                        Color:{" "}
-                      </span>{" "}
-                      Light Blue
-                    </p>
-                  </div>
-                </div>
-                <div className="flex justify-between space-x-8 items-start w-full">
-                  <p className="text-base dark:text-white xl:text-lg leading-6">
-                    $20.00{" "}
-                    <span className="text-red-300 line-through"> $30.00</span>
-                  </p>
-                  <p className="text-base dark:text-white xl:text-lg leading-6 text-gray-800">
-                    01
-                  </p>
-                  <p className="text-base dark:text-white xl:text-lg font-semibold leading-6 text-gray-800">
-                    $20.00
-                  </p>
-                </div>
-              </div>
-            </div>
+              );
+            })}
           </div>
-          <div className="flex justify-center flex-col md:flex-row flex-col items-stretch w-full space-y-4 md:space-y-0 md:space-x-6 xl:space-x-8">
+          <div className="flex justify-center md:flex-row flex-col items-stretch w-full space-y-4 md:space-y-0 md:space-x-6 xl:space-x-8">
             <div className="flex flex-col px-4 py-6 md:p-6 xl:p-8 w-full bg-gray-50 dark:bg-gray-800 space-y-6">
               <h3 className="text-xl dark:text-white font-semibold leading-5 text-gray-800">
                 Summary
@@ -135,26 +108,16 @@ const index = () => {
                     Subtotal
                   </p>
                   <p className="text-base dark:text-gray-300 leading-4 text-gray-600">
-                    $56.00
+                    ${itemPrice}
                   </p>
                 </div>
-                <div className="flex justify-between items-center w-full">
-                  <p className="text-base dark:text-white leading-4 text-gray-800">
-                    Discount{" "}
-                    <span className="bg-gray-200 p-1 text-xs font-medium dark:bg-white dark:text-gray-800 leading-3 text-gray-800">
-                      STUDENT
-                    </span>
-                  </p>
-                  <p className="text-base dark:text-gray-300 leading-4 text-gray-600">
-                    -$28.00 (50%)
-                  </p>
-                </div>
+
                 <div className="flex justify-between items-center w-full">
                   <p className="text-base dark:text-white leading-4 text-gray-800">
                     Shipping
                   </p>
                   <p className="text-base dark:text-gray-300 leading-4 text-gray-600">
-                    $8.00
+                    ${order?.shippingPrice}
                   </p>
                 </div>
               </div>
@@ -163,7 +126,7 @@ const index = () => {
                   Total
                 </p>
                 <p className="text-base dark:text-gray-300 font-semibold leading-4 text-gray-600">
-                  $36.00
+                  ${order?.totalPrice}
                 </p>
               </div>
             </div>
@@ -191,7 +154,7 @@ const index = () => {
                   </div>
                 </div>
                 <p className="text-lg font-semibold leading-6 dark:text-white text-gray-800">
-                  $8.00
+                  ${order?.shippingPrice}
                 </p>
               </div>
               <div className="w-full flex justify-center items-center">
@@ -215,10 +178,7 @@ const index = () => {
                 />
                 <div className="flex justify-start items-start flex-col space-y-2">
                   <p className="text-base dark:text-white font-semibold leading-4 text-left text-gray-800">
-                    David Kent
-                  </p>
-                  <p className="text-sm dark:text-gray-300 leading-5 text-gray-600">
-                    10 Previous Orders
+                    {order?.shippingAddress.username}
                   </p>
                 </div>
               </div>
@@ -244,32 +204,51 @@ const index = () => {
                   />
                 </svg>
                 <p className="cursor-pointer text-sm leading-5 ">
-                  david89@gmail.com
+                  {order?.shippingAddress.email}
                 </p>
               </div>
             </div>
-            <div className="flex justify-between xl:h-full items-stretch w-full flex-col mt-6 md:mt-0">
+            <div className="flex xl:h-full items-stretch w-full flex-col mt-6 md:mt-0">
               <div className="flex justify-center md:justify-start xl:flex-col flex-col md:space-x-6 lg:space-x-8 xl:space-x-0 space-y-4 xl:space-y-12 md:space-y-0 md:flex-row items-center md:items-start">
                 <div className="flex justify-center md:justify-start items-center md:items-start flex-col space-y-4 xl:mt-8">
                   <p className="text-base dark:text-white font-semibold leading-4 text-center md:text-left text-gray-800">
                     Shipping Address
                   </p>
                   <p className="w-48 lg:w-full dark:text-gray-300 xl:w-48 text-center md:text-left text-sm leading-5 text-gray-600">
-                    180 North King Street, Northhampton MA 1060
+                    {order?.shippingAddress.address}
                   </p>
                 </div>
                 <div className="flex justify-center md:justify-start items-center md:items-start flex-col space-y-4">
                   <p className="text-base dark:text-white font-semibold leading-4 text-center md:text-left text-gray-800">
-                    Billing Address
+                    City Address
                   </p>
                   <p className="w-48 lg:w-full dark:text-gray-300 xl:w-48 text-center md:text-left text-sm leading-5 text-gray-600">
-                    180 North King Street, Northhampton MA 1060
+                    {order?.shippingAddress.city}
                   </p>
                 </div>
               </div>
-              <div className="flex w-full justify-center items-center md:justify-start md:items-start">
-                <button className="mt-6 md:mt-0 dark:border-white dark:hover:bg-gray-900 dark:bg-transparent dark:text-white py-5 hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-800 border border-gray-800 font-medium w-96 2xl:w-full text-base font-medium leading-4 text-gray-800">
-                  Edit Details
+              <div className="flex w-full justify-center mt-20 items-center md:justify-start md:items-start">
+                <button
+                  onClick={handleCheckout}
+                  type="button"
+                  className="text-gray-900 bg-[#F7BE38] hover:bg-[#F7BE38]/90 focus:ring-4 focus:ring-[#F7BE38]/50 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center dark:focus:ring-[#F7BE38]/50 mr-2 mb-2"
+                >
+                  <svg
+                    className="mr-2 -ml-1 w-4 h-4"
+                    aria-hidden="true"
+                    focusable="false"
+                    data-prefix="fab"
+                    data-icon="paypal"
+                    role="img"
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 384 512"
+                  >
+                    <path
+                      fill="currentColor"
+                      d="M111.4 295.9c-3.5 19.2-17.4 108.7-21.5 134-.3 1.8-1 2.5-3 2.5H12.3c-7.6 0-13.1-6.6-12.1-13.9L58.8 46.6c1.5-9.6 10.1-16.9 20-16.9 152.3 0 165.1-3.7 204 11.4 60.1 23.3 65.6 79.5 44 140.3-21.5 62.6-72.5 89.5-140.1 90.3-43.4 .7-69.5-7-75.3 24.2zM357.1 152c-1.8-1.3-2.5-1.8-3 1.3-2 11.4-5.1 22.5-8.8 33.6-39.9 113.8-150.5 103.9-204.5 103.9-6.1 0-10.1 3.3-10.9 9.4-22.6 140.4-27.1 169.7-27.1 169.7-1 7.1 3.5 12.9 10.6 12.9h63.5c8.6 0 15.7-6.3 17.4-14.9 .7-5.4-1.1 6.1 14.4-91.3 4.6-22 14.3-19.7 29.3-19.7 71 0 126.4-28.8 142.9-112.3 6.5-34.8 4.6-71.4-23.8-92.6z"
+                    />
+                  </svg>
+                  Check out with PayPal
                 </button>
               </div>
             </div>
@@ -281,3 +260,11 @@ const index = () => {
 };
 
 export default index;
+
+export const getStaticProps = async () => {
+  const { data } = await axios.get(`${API_URL}/api/order`);
+
+  return {
+    props: { data },
+  };
+};

@@ -4,11 +4,12 @@ import nc from "next-connect";
 
 const handler = nc();
 
-handler.get(async (req, res) => {
+handler.post(async (req, res) => {
   await connectDB();
-  const orders = await Order.find({}).sort({ createdAt: -1 });
+  const newOrder = await new Order(req.body);
 
-  res.send({ success: true, orders });
+  await newOrder.save();
+  res.send({ success: true, message: "Created order success!", newOrder });
 });
 
 export default handler;

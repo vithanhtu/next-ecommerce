@@ -12,8 +12,6 @@ import {
 import Link from "next/link";
 import Image from "next/image";
 import axios from "axios";
-import Cookies from "js-cookie";
-import { useRouter } from "next/router";
 
 const Shop = ({ products }) => {
   const dispatch = useDispatch();
@@ -23,19 +21,18 @@ const Shop = ({ products }) => {
   const [moreElement, setMoreElement] = useState(6);
   const sliceData = products.slice(0, moreElement);
   const allCategories = [...new Set(products.map((item) => item.info))];
-  const router = useRouter();
 
   const loadMore = () => {
     setMoreElement(moreElement + moreElement);
   };
 
   const handleAddToCart = async (item) => {
-    const accessToken = Cookies.get("accessToken");
-    if (!accessToken) {
-      window.alert("You need to Signin to continue!");
-      router.push("/login");
-      return;
-    }
+    // const accessToken = Cookies.get("accessToken");
+    // if (!accessToken) {
+    //   window.alert("You need to Signin to continue!");
+    //   router.push("/login");
+    //   return;
+    // }
     dispatch(addToCart(item));
   };
 
